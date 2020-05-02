@@ -17,20 +17,14 @@ class TicTacToe
   def initialize(player1, player2)
     @player1 = player1
     @player2 = player2
-    @board = Array.new(9)
     @active_player = 1
     @winner = nil
+    # @board = Array.new(9)
     clear_game_board()
   end
 
   def clear_game_board
     @game_board = [0,0,0, 0,0,0, 0,0,0]
-    # for array use the following index ( 4 is center square )
-    # 0,1,2
-    # 3,4,5
-    # 6,7,8
-    #
-
   end
 
   def make_move(move_string)
@@ -46,22 +40,45 @@ class TicTacToe
     return nil unless valid_positions.include?(move)
     # check if that move is avaliable
     return nil if @game_board[move-1] != 0
+
     # mark that move with current player's turn
     @game_board[move-1] = @active_player
     toggle_active_player
     return move
   end
 
+  def check_for_winner
+    # for array use the following index ( 4 is center square )
+    # 0,1,2
+    # 3,4,5
+    # 6,7,8
+
+    winner = nil
+    winning_combinations = [[0,1,2], [3,4,5], [6,7,8],
+                            [0,3,6], [1,4,7], [2,5,8],
+                            [0,4,8], [2,4,6]]
+    # binding.pry
+    winning_combinations.each do |pattern|
+      count_1 = 0
+      count_2 = 0
+      pattern.each do |x|
+        count_1 += 1 if @game_board[x] == 1
+        count_2 += 1 if @game_board[x] == 2
+      end
+      winner = @player1 if count_1 == 3
+      winner = @player2 if count_2 == 3
+      # binding.pry
+    end
+
+    return winner
+  end
+
   def toggle_active_player
     @active_player == 1 ? @active_player = 2 : @active_player = 1
   end
 
-  def active_player_name
-    if @active_player == 1
-      @player1.name
-    else
-      @player2.name
-    end
+  def active_player
+    @active_player == 1 ? @player1 : @player2
   end
 
 end
@@ -90,7 +107,7 @@ class Game
       # draw game board
       # p ttt.game_board
       display_game_board(ttt.game_board)
-      display_player_prompt(ttt.active_player_name)
+      display_player_prompt(ttt.active_player)
       # get current players move
       move = gets.chomp
       status = nil if move == 'q'
@@ -102,7 +119,14 @@ class Game
       else
         puts "Can't go there."
       end
-
+      # check if there was a winner and display win screen
+      display_game_board(ttt.game_board)
+      who_won = ttt.check_for_winner
+      if who_won
+        puts "#{who_won.name} won the game."
+        status = "win"
+      end
+      break if status == "win"
     end
 
   end
@@ -129,7 +153,6 @@ class Game
 
 
     game_board.each_with_index do |value, index|
-      # binding.pry
       character = ""
       character = "X" if value == 1
       character = "O" if value == 2
@@ -156,20 +179,15 @@ class Game
 
     print "\033[#{line};#{column}f"
     board.each_with_index do |text,index|
-      #\033[<L>;<C>H <L> line and <C> column
-      # binding.pry
-      print"\033[#{line+index};#{column}H#{text}"  #  L#{line+index} C#{column}"
-      # a = gets.chomp
-      # print text
+      print"\033[#{line+index};#{column}H#{text}"
     end
-    # print"\033[1;1HZ"
   end
 
-  def display_player_prompt(name)
+  def display_player_prompt(player)
     line = 11
     column = 2
     print"\033[#{line};#{column}H"
-    print "It's #{name}s turn. Which position: "
+    print "It's #{player.name}s turn. Which position: "
   end
 
 end
