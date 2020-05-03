@@ -19,8 +19,13 @@ class TicTacToe
     @player2 = player2
     @active_player = 1
     @winner = nil
-    # @board = Array.new(9)
     clear_game_board()
+  end
+
+  def setup_new_game(p1,p2)
+    clear_game_board
+    @active_player = 1
+    @winner = nil
   end
 
   def clear_game_board
@@ -43,6 +48,7 @@ class TicTacToe
 
     # mark that move with current player's turn
     @game_board[move-1] = @active_player
+    check_for_winner
     toggle_active_player
     return move
   end
@@ -57,7 +63,6 @@ class TicTacToe
     winning_combinations = [[0,1,2], [3,4,5], [6,7,8],
                             [0,3,6], [1,4,7], [2,5,8],
                             [0,4,8], [2,4,6]]
-    # binding.pry
     winning_combinations.each do |pattern|
       count_1 = 0
       count_2 = 0
@@ -65,12 +70,12 @@ class TicTacToe
         count_1 += 1 if @game_board[x] == 1
         count_2 += 1 if @game_board[x] == 2
       end
-      winner = @player1 if count_1 == 3
-      winner = @player2 if count_2 == 3
-      # binding.pry
+      @winner = @player1 if count_1 == 3
+      @winner = @player2 if count_2 == 3
+      @winner = "tie" if !@game_board.include?(0)
     end
 
-    return winner
+    # return winner
   end
 
   def toggle_active_player
@@ -99,21 +104,21 @@ class Game
     name = get_player_name("Enter player 2 name:")
     player2 = Player.new(name)
 
-    p player1.name
-    p player2.name
+    # p player1.name
+    # p player2.name
     ttt = TicTacToe.new(player1, player2)
     status = "play"
-    while status && !ttt.winner
+    while status != "exit"
       # draw game board
-      # p ttt.game_board
       display_game_board(ttt.game_board)
-      display_player_prompt(ttt.active_player)
+      # display_message("type \'q\' to quit game.",11,2)
+      display_player_prompt(ttt.active_player,12,2)
+
       # get current players move
       move = gets.chomp
-      status = nil if move == 'q'
-      # make play in ttt
+      status = "exit" if move == 'q'
+      # make move in ttt
       move_result = ttt.make_move(move)
-      # p move_result
       if move_result
         puts "Marked #{move_result}"
       else
@@ -121,14 +126,28 @@ class Game
       end
       # check if there was a winner and display win screen
       display_game_board(ttt.game_board)
-      who_won = ttt.check_for_winner
-      if who_won
-        puts "#{who_won.name} won the game."
+      # who_won = ttt.check_for_winner
+      who_won = ttt.winner
+
+      if who_won == player1 || who_won == player2
+        display_message("#{who_won.name} won the game.", 16, 2)
         status = "win"
       end
-      break if status == "win"
-    end
 
+      if who_won == "tie"
+        display_message("Tie game.", 16, 2)
+        status = "tie"
+      end
+
+      if status == "win" || status == "tie"
+        display_message("push ENTER to continue.",18, 2)
+        gets.chomp
+        # setup for another game
+        ttt.setup_new_game(player1,player2)
+        status = "play"
+      end
+    end
+    print"\033[16;1H"
   end
 
   def get_player_name(prompt)
@@ -138,25 +157,17 @@ class Game
   end
 
   def display_game_board(game_board)
-    pos_line = 2
-    pos_column = 10
+    line = 2
+    column = 10
     print"\033[2J\033[1;1H" # clear screen and set cursor to 1,1
-    display_empty_board(pos_line,pos_column)
-    # puts "\n"
-    # game_board.each_with_index do |value, index|
-    #   puts if index % 3 == 0
-    #   print "X" if value == 1
-    #   print "O" if value == 2
-    #   print "·" if value != 1 && value != 2
-    # end
+    display_empty_board(line,column)
     position_pairs = [[1,2],[1,6],[1,10], [3,2],[3,6],[3,10],  [5,2],[5,6],[5,10]]
-
 
     game_board.each_with_index do |value, index|
       character = ""
       character = "X" if value == 1
       character = "O" if value == 2
-      print"\033[#{position_pairs[index][0]+pos_line};#{position_pairs[index][1]+pos_column}H#{character}"
+      print"\033[#{position_pairs[index][0]+line};#{position_pairs[index][1]+column}H#{character}"
     end
     # puts "\n"
   end
@@ -183,11 +194,15 @@ class Game
     end
   end
 
-  def display_player_prompt(player)
-    line = 11
-    column = 2
+  def display_player_prompt(player, line, column)
+    # line = 11
+    # column = 2
     print"\033[#{line};#{column}H"
     print "It's #{player.name}s turn. Which position: "
+  end
+
+  def display_message(text, line, column)
+    print"\033[#{line};#{column}H#{text}"
   end
 
 end
