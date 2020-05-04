@@ -3,14 +3,14 @@ class TicTacToe
   def initialize(player1, player2)
     @player1 = player1
     @player2 = player2
-    @active_player = 1
+    @active_player = player1.id
     @winner = nil
     clear_game_board()
   end
 
-  def setup_new_game(p1,p2)
+  def setup_new_game(player1,player2)
     clear_game_board
-    @active_player = 1
+    @active_player = player1.id
     @winner = nil
   end
 
