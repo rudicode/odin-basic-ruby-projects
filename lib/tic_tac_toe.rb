@@ -60,8 +60,6 @@ class TicTacToe
       @winner = @player2 if count_2 == 3
       @winner = "tie" if !@game_board.include?(0)
     end
-
-    # return winner
   end
 
   def toggle_active_player
