@@ -3,18 +3,12 @@ require "./lib/tic_tac_toe"
 require "./lib/game_io"
 
 class Game
-  # setup 2 players ( get names )
-  # start TicTacToe game with the players ( winner of previous game goes 2nd )
-  # keep points ( 1 point for a win )
-  # handle CLI
   def initialize
     @game_board_pos_x = 15
     @game_board_pos_y = 3
   end
 
   def start
-    # setup game parameters and then loop until exit
-
     @game_io = GameIo.new(30, 20)
     @game_io.clear_screen
 
@@ -40,23 +34,16 @@ class Game
       @game_io.clear_screen
       display_game_board(@tic_tac_toe.game_board, @game_board_pos_x, @game_board_pos_y)
       display_player_info(player1, player2)
-      display_player_prompt(@tic_tac_toe.active_player,12,2)
 
       # get current players move
-      move = gets.chomp
+      move = player_prompt(@tic_tac_toe.active_player,12,2)
       game_status = "exit" if move == 'q'
-      # make move in tic_tac_toe
       move_result  = @tic_tac_toe.make_move(move)
-      # if move_result
-        # puts "Marked #{move_result}"
-      # else
-        # puts "Can't go there."
-      # end
 
-      # check if there was a winner and display win screen
       @game_io.clear_screen
       display_game_board(@tic_tac_toe.game_board, @game_board_pos_x, @game_board_pos_y)
       display_player_info(player1, player2)
+
       who_won = @tic_tac_toe.winner
 
       if who_won == player1 || who_won == player2
@@ -71,9 +58,7 @@ class Game
       end
 
       if game_status == "win" || game_status == "tie"
-        @game_io.put_string("push ENTER to continue.",2, 18)
-        gets.chomp
-        # setup for another game
+        @game_io.get_string("push ENTER to continue.",2, 18)
         @tic_tac_toe.setup_new_game(player1,player2)
         game_status = "play"
       end
@@ -118,9 +103,9 @@ class Game
     end
   end
 
-  def display_player_prompt(player, line, column)
+  def player_prompt(player, line, column)
     text = "#{player.name} [#{player.letter}] play a position (1-9): "
-    @game_io.put_string(text, column, line)
+    @game_io.get_string(text, column, line)
   end
 
   def display_player_info(player1, player2)
@@ -132,12 +117,12 @@ class Game
     @game_io.put_string("[#{player1.letter}]", p1_letter_center, 6)
     @game_io.put_string("#{player1.points}", p1_points_center, 8)
 
-    # note the + 14 is the width of the game board.
-    p2_name_center   = ( (space_width-player2.name.length) / 2 ) + space_width + 14
-    p2_letter_center = ( (space_width-3) / 2 ) + space_width + 14
-    p2_points_center = ( space_width / 2 ) + space_width + 14
+    game_board_width = 14
+    p2_name_center   = ( (space_width-player2.name.length) / 2 ) + space_width + game_board_width
+    p2_letter_center = ( (space_width-3) / 2 ) + space_width + game_board_width
+    p2_points_center = ( space_width / 2 ) + space_width + game_board_width
     @game_io.put_string("#{player2.name}", p2_name_center, 4)
-    @game_io.put_string("[#{player2.letter}]", p2_letter_center, 6)
+    @game_io.put_string("[#{player2 .letter}]", p2_letter_center, 6)
     @game_io.put_string("#{player2.points}", p2_points_center, 8)
   end
 
