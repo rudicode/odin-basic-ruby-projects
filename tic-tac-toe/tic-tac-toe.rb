@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # tic.tac.toe.rb
-require 'pry'
+# require 'pry'
 require "./lib/game"
 
 game = Game.new
