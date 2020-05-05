@@ -38,16 +38,14 @@ class Game
 
     game_status = "play"
     while game_status != "exit"
-      # draw game board
+
       @game_io.clear_screen
       display_game_board(@tic_tac_toe.game_board, @game_board_pos_x, @game_board_pos_y)
       display_player_info()
 
-      # get current players move
       move = player_prompt(@tic_tac_toe.active_player,12,2)
       game_status = "exit" if move == 'q'
       move_result  = @tic_tac_toe.make_move(move)
-
 
       who_won = @tic_tac_toe.winner
 
@@ -61,6 +59,7 @@ class Game
       end
 
       if who_won == "tie"
+        display_game_board(@tic_tac_toe.game_board, @game_board_pos_x, @game_board_pos_y)
         @game_io.put_string("Tie game.", 2, 16)
         game_status = "tie"
       end
@@ -95,7 +94,6 @@ class Game
   end
 
   def display_empty_board(line,column)
-    # top left of screen is (1,1)
     line   = 1 if line   < 1
     column = 1 if column < 1
     # small superscript numbers: ⁰¹²³⁴⁵⁶⁷⁸⁹
@@ -120,9 +118,9 @@ class Game
     @game_io.get_string(text, column, line)
   end
 
-  # def display_player_info(@player1, @player2)
   def display_player_info()
-    space_width = @game_board_pos_x # make the width of the space same as x pos of game board
+    # make the width of player 1 space same as x pos of game board
+    space_width = @game_board_pos_x
     p1_name_center = (space_width-@player1.name.length) / 2
     p1_letter_center = (space_width-3) / 2
     p1_points_center = space_width / 2

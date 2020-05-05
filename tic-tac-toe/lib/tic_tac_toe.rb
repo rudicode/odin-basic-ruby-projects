@@ -46,15 +46,15 @@ class TicTacToe
     # 6,7,8
 
     winner = nil
-    winning_combinations = [[0,1,2], [3,4,5], [6,7,8],
+    winning_patterns = [[0,1,2], [3,4,5], [6,7,8],
                             [0,3,6], [1,4,7], [2,5,8],
                             [0,4,8], [2,4,6]]
-    winning_combinations.each do |pattern|
+    winning_patterns.each do |pattern|
       count_1 = 0
       count_2 = 0
       pattern.each do |x|
-        count_1 += 1 if @game_board[x] == 1
-        count_2 += 1 if @game_board[x] == 2
+        count_1 += 1 if @game_board[x] == @player1.id
+        count_2 += 1 if @game_board[x] == @player2.id
       end
       @winner = @player1 if count_1 == 3
       @winner = @player2 if count_2 == 3
@@ -63,11 +63,11 @@ class TicTacToe
   end
 
   def toggle_active_player
-    @active_player == 1 ? @active_player = 2 : @active_player = 1
+    @active_player == @player1.id ? @active_player = @player2.id : @active_player = @player1.id
   end
 
   def active_player
-    @active_player == 1 ? @player1 : @player2
+    @active_player == @player1.id ? @player1 : @player2
   end
 
 end
