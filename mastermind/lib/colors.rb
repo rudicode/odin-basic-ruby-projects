@@ -26,11 +26,25 @@ module Colors
   UNDWHT="\033[4;37m"# White
   BAKBLK="\033[40m"  # Black - Background
   BAKRED="\033[41m"  # Red
-  BADGRN="\033[42m"  # Green
+  BAKGRN="\033[42m"  # Green
   BAKYLW="\033[43m"  # Yellow
   BAKBLU="\033[44m"  # Blue
   BAKPUR="\033[45m"  # Purple
   BAKCYN="\033[46m"  # Cyan
   BAKWHT="\033[47m"  # White
   TXTRST="\033[0m"   # Text Reset
+
+  # color scheme for mastermind
+  P0 = []
+  P0[0] = "#{TXTWHT}#{BAKBLK}" # gameboard
+  P0[1] = "#{TXTBLK}\033[48;5;160m 1 #{P0[0]}"
+  P0[2] = "#{TXTBLK}\033[48;5;46m 2 #{P0[0]}"
+  P0[3] = "#{TXTBLK}\033[48;5;25m 3 #{P0[0]}"
+  P0[4] = "#{TXTBLK}\033[48;5;11m 4 #{P0[0]}"
+  P0[5] = "#{TXTBLK}\033[48;5;14m 5 #{P0[0]}"
+  P0[6] = "#{TXTBLK}\033[48;5;15m 6 #{P0[0]}"
+  P0[7] = "#{BLDBLK}●#{P0[0]}"
+  P0[8] = "#{TXTGRN}●#{P0[0]}"
+  P0[9] = "#{TXTRED}●#{P0[0]}"
+
 end

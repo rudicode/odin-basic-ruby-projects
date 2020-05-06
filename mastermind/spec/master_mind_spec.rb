@@ -16,7 +16,7 @@ RSpec.describe MasterMind do
     end
 
     it 'has @guess_number set to 1' do
-      expect(@game.guess_number).to eq(1)
+      expect(@game.current_guess_number).to eq(1)
     end
 
     it 'sets @guess array to empty' do
@@ -36,7 +36,7 @@ RSpec.describe MasterMind do
   describe '#make_guess' do
 
     it "incraments @guess_number by 1" do
-      expect {@game.make_guess([1,2,3,4])}.to change {@game.guess_number}.by(1)
+      expect {@game.make_guess([1,2,3,4])}.to change {@game.current_guess_number}.by(1)
     end
 
     it "adds guess to @guesses array" do
@@ -121,4 +121,53 @@ RSpec.describe MasterMind do
     end
 
   end
+
+  describe '#valid_digits' do
+    context 'input as String' do
+
+      it "returns array of num_digits digits" do
+        expect(@game.valid_digits("123", 3)).to eq([1,2,3])
+        expect(@game.valid_digits("1234", 4)).to eq([1,2,3,4])
+        expect(@game.valid_digits("12345", 5)).to eq([1,2,3,4,5])
+      end
+
+
+      it "returns nil if string length is not num_digits length" do
+        expect(@game.valid_digits("12345", 4)).to be_nil
+      end
+
+      it "returns nil if any characters are non-digits" do
+        expect(@game.valid_digits("1hi3", 4)).to be_nil
+      end
+      it "all digits are within min..max" do
+        @game.min_digit=3
+        @game.max_digit=6
+        expect(@game.valid_digits("2444", 4)).to be_nil
+        expect(@game.valid_digits("4449", 4)).to be_nil
+
+      end
+    end
+
+    context "input as Array" do
+      it "also works correctly" do
+        expect(@game.valid_digits([2,3,2,3], 4)).to eq([2,3,2,3])
+      end
+      it "also rejects bad data" do
+        expect(@game.valid_digits([2,"h","i",3], 4)).to be_nil
+        expect(@game.valid_digits([2,1,2,3,7], 3)).to be_nil
+      end
+
+    end
+
+  end
+
+  describe '#create_random_solution' do
+    it "sets solution to valid digits" do
+      @game = MasterMind.new([1,2,3,4])
+      @game.setup_new_game()
+      expect(@game.solution.length).to eq(@game.num_digits)
+      expect(@game.valid_digits(@game.solution,@game.num_digits)).to eq(@game.solution)
+    end
+  end
+
 end
