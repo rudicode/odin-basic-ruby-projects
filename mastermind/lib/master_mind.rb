@@ -1,4 +1,3 @@
-require 'pry'
 
 class MasterMind
     attr_reader :solution, :current_guess_number, :guesses, :max_guesses

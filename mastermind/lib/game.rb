@@ -1,4 +1,3 @@
-require "pry"
 require "./lib/player"
 require "./lib/colors"
 require "./lib/master_mind"
