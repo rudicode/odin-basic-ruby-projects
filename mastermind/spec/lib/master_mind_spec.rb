@@ -93,6 +93,18 @@ RSpec.describe MasterMind do
       expect(@game.guesses[-1][:correct_numbers]).to eq(0)
     end
 
+    it "finds correct solution when secret has multiple same numbers" do
+      @game = MasterMind.new([5,5,5,5])
+      @game.make_guess([2,4,5,6])
+      expect(@game.guesses[-1][:correct_positions]).to eq(1)
+      expect(@game.guesses[-1][:correct_numbers]).to eq(0)
+
+      @game.setup_new_game([4,4,4,1])
+      @game.make_guess([2,4,5,6])
+      expect(@game.guesses[-1][:correct_positions]).to eq(1)
+      expect(@game.guesses[-1][:correct_numbers]).to eq(0)
+    end
+
     it "sets @win to true" do
       @game.setup_new_game([1,1,6,4])
       @game.make_guess([1,1,6,4])
@@ -158,7 +170,6 @@ RSpec.describe MasterMind do
       end
 
     end
-
   end
 
   describe '#create_random_solution' do

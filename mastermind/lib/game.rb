@@ -8,9 +8,10 @@ class Game
   include Colors
 
   def initialize
+    @debug = :false
     @game_io = GameIo.new(80,40)
     @mastermind = MasterMind.new([6,5,1,2])
-    @display_code = false
+    @display_code = :false
     @score = 0
     @pos_x = 16
     @pos_y = 2
@@ -31,32 +32,39 @@ class Game
         display_message
         input = @game_io.get_string("> ",@pos_x , @pos_y + 34)
         status = :exit if input == 'q'
+        @display_code = :true if input == 'look' && @debug == :true
       end
 
       if status == :finished
-        @display_code = false
+        @display_code = :false
         status = :starting
       end
 
       if status == :play
         result = @mastermind.make_guess( (input) )
         if !result
-          @message = "Invalid input. Try 4 digits."
+          @message = "#{BLDYLW}Invalid input. Try 4 digits.#{TXTRST}"
         else
           @message = "That was guess \##{result}"
         end
 
         if @mastermind.win?
-          @message = "You Win in #{@mastermind.guesses.length} moves."
-          @display_code = true
+          if @mastermind.current_guess_number == 2
+            @message = "#{BLDGRN}You Won on your first move.#{TXTRST}"
+          else
+            @message = "#{BLDGRN}You Win in #{@mastermind.guesses.length} moves.#{TXTRST}"
+          end
+          @display_code = :true
           @score += 1
           status = :finished
         end
-        if @mastermind.current_guess_number > @mastermind.max_guesses
+
+        if @mastermind.current_guess_number > @mastermind.max_guesses && status == :play
           @message = "Sorry out of turns. Hit enter to play again."
-          @display_code = true
+          @display_code = :true
           status = :finished
         end
+
       end
     end
   end
@@ -67,6 +75,7 @@ class Game
   end
 
   def display_game_board(column, line)
+    #
     # special characters  █ │³│░┌─┬┐└─┴┘─┼●┤├
     # ┌──┐ ┌───┬───┬───┬───┐ ┌───────┐
     # │11│░│   │   │   │   │░│● ● ● ●│░
@@ -139,7 +148,7 @@ class Game
       @game_io.put_string(pegs, column + 26, line_counter + line)
       line_counter += 2
     end
-    if @display_code
+    if @display_code == :true
       solution = @mastermind.solution
       solution.each_with_index do |x, i|
         @game_io.put_string(P0[x], column + 7 + (i * 4) , line + 29)

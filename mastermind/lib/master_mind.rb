@@ -4,7 +4,7 @@ class MasterMind
     attr_reader :solution, :current_guess_number, :guesses, :max_guesses
     attr_accessor :min_digit, :max_digit, :num_digits
 
-    def initialize(solution, max_guesses=12, min_digit=1, max_digit=6)
+    def initialize(solution=nil, max_guesses=12, min_digit=1, max_digit=6)
       @max_guesses = max_guesses
       @min_digit = min_digit
       @max_digit = max_digit
@@ -73,12 +73,12 @@ class MasterMind
         end
       end
 
+      guess_temp = guess.dup
       target.each do |x|
-        guess_temp = guess.dup
         4.times do |y|
             if x == guess_temp[y]
               counter_numbers += 1
-              # guess_temp[y] = 0
+              guess_temp[y] = 0
               break;
             end
         end
